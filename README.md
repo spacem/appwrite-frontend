@@ -1,3 +1,42 @@
+## Auth UI
+
+This project includes an extendable Appwrite Auth UI supporting:
+
+- Email/Password (register + login)
+- OAuth (GitHub, Discord, Google out of the box)
+ - Magic Link (email)
+ - OTP (email)
+- Anonymous sessions
+- Session controls (extend, logout)
+
+### Adding a new OAuth provider
+
+1. In Appwrite console, enable the provider and enter Client ID/Secret.
+2. Add your site/app URLs to Project → Platforms so redirects are allowed.
+3. Update `src/components/auth/ProviderButtons.tsx`:
+  - Add the provider key to `OAuthProviderKey` union.
+  - Map the key to `OAuthProvider.<Name>` in `providerToEnum`.
+  - Add the key to `enabledProviders` in `src/pages/AuthPage.tsx`.
+
+That’s it—the button will appear and use Appwrite’s default flow.
+
+### Magic Link and OTP callbacks
+
+Magic Link and Phone OTP redirect back to your app with `userId` and `secret` query params. `AuthPage` detects these and finalizes the session using Appwrite’s `updateMagicURLSession` or `createSession` in the OTP forms.
+
+### Email login UX (code-first)
+
+The "Continue with Email" screen offers a single email field and two login methods:
+
+- Code (default): Sends a one-time code to the email. After sending, a code input appears with a Verify button. A Resend button is shown with a short cooldown.
+- Password: Traditional email/password auth. Registration uses email + password as well.
+
+Phone-based OTP was removed to avoid Appwrite plan limits; the code option is email-only.
+
+### Password recovery
+
+Password reset uses Appwrite Recovery under the hood. When Appwrite redirects back with `userId` and `secret` in the URL, a small modal prompts for a new password and completes `updateRecovery`, then clears the URL params.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

@@ -1,0 +1,13 @@
+.provider-grid { display: grid; gap: 8px; margin-top: 0; }
+.provider-grid.horizontal { grid-auto-flow: column; gap: 12px; }
+
+.btn.provider { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; display:flex; align-items:center; gap:10px }
+.btn.provider .icon { width: 18px; height: 18px; display:inline-grid; place-items:center }
+.btn.provider .icon svg { width: 18px; height: 18px }
+.btn.provider.pill { width:auto; padding:10px 14px }
+.btn.provider.tile { aspect-ratio: 3/1; display:flex; justify-content:center }
+.btn.provider:hover { background: var(--surface-2); }
+.btn.provider.google .icon{background:transparent}
+.btn.provider.discord .icon{color:#5865F2}
+
+.btn.provider:focus-visible{outline:2px solid var(--primary)}

@@ -1,0 +1,3 @@
+.row{display:flex;gap:8px;align-items:center}
+.row.spread{justify-content:space-between}
+.btn.danger{background:#ff4d4f;color:#fff;border-color:#ff4d4f}
