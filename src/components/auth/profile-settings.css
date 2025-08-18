@@ -1,0 +1,7 @@
+.profile-settings { display: grid; gap: 16px; }
+.profile-settings .field { display: grid; gap: 6px; }
+.profile-settings .row { display: flex; gap: 8px; align-items: center; }
+.profile-settings label { font-weight: 500; }
+.profile-settings input { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; }
+.profile-settings .btn { padding: 6px 12px; border-radius: 6px; }
+.profile-settings .card { margin-bottom: 8px; }

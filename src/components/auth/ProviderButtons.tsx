@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { account } from '../../lib/appwrite';
+import { account, getOAuthIdentities, unlinkIdentity } from '../../lib/appwrite';
 import { OAuthProvider } from 'appwrite';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import './provider-buttons.css';
 
@@ -33,6 +34,7 @@ export interface ProviderButtonsProps {
   showIcons?: boolean;
   tileButtons?: boolean;
   horizontal?: boolean;
+  mode?: 'profile' | 'auth'; // 'profile' = link/unlink, 'auth' = continue with
 }
 
 const Icons: Partial<Record<OAuthProviderKey, ReactNode>> = {
@@ -47,12 +49,24 @@ const Icons: Partial<Record<OAuthProviderKey, ReactNode>> = {
   ),
 };
 
-export default function ProviderButtons({ providers, onError, showIcons, tileButtons, horizontal }: ProviderButtonsProps) {
+export default function ProviderButtons({ providers, onError, showIcons, tileButtons, horizontal, mode = 'profile' }: ProviderButtonsProps) {
   const origin = window.location.origin;
+  const [linked, setLinked] = useState<Partial<Record<OAuthProviderKey, string>>>({}); // provider -> identityId
+  const [loading, setLoading] = useState<string | null>(null); // provider being unlinked
+
+  useEffect(() => {
+    if (mode !== 'profile') return;
+    getOAuthIdentities().then(ids => {
+      const map: Partial<Record<OAuthProviderKey, string>> = {};
+      ids.forEach((id: any) => {
+        if (id.provider in providerToEnum) map[id.provider as OAuthProviderKey] = id.$id;
+      });
+      setLinked(map);
+    }).catch(() => {});
+  }, [mode]);
 
   const startOAuth = async (key: OAuthProviderKey) => {
     try {
-      // Use token flow to avoid third-party cookie issues
       const success = `${origin}?provider=${encodeURIComponent(key)}`;
       const failure = `${origin}?oauth_error=1&provider=${encodeURIComponent(key)}`;
       await account.createOAuth2Token(providerToEnum[key], success, failure);
@@ -61,11 +75,48 @@ export default function ProviderButtons({ providers, onError, showIcons, tileBut
     }
   };
 
+  const handleUnlink = async (key: OAuthProviderKey) => {
+    const id = linked[key];
+    if (!id) return;
+    setLoading(key);
+    try {
+      await unlinkIdentity(id);
+      setLinked(l => {
+        const n = { ...l };
+        delete n[key];
+        return n;
+      });
+    } catch (err) {
+      onError?.(err);
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <div className={`provider-grid${horizontal ? ' horizontal' : ''}${tileButtons ? ' tiles' : ''}`}>
       {providers.map((p) => {
-        const label = `Continue with ${p.charAt(0).toUpperCase() + p.slice(1)}`;
+        let label = '';
+        if (mode === 'profile') {
+          label = linked[p]
+            ? `Unlink ${p.charAt(0).toUpperCase() + p.slice(1)}`
+            : `Link ${p.charAt(0).toUpperCase() + p.slice(1)}`;
+        } else {
+          label = `Continue with ${p.charAt(0).toUpperCase() + p.slice(1)}`;
+        }
         const icon = Icons[p];
+        if (mode === 'profile' && linked[p]) {
+          return (
+            <button key={p} className={`btn provider ${p} unlink${tileButtons ? ' tile' : ''}${horizontal ? ' pill' : ''}`} onClick={() => handleUnlink(p)} disabled={loading === p}>
+              {showIcons && (
+                <span className="icon" aria-hidden="true">
+                  {icon ?? <span className="fallback">{p[0].toUpperCase()}</span>}
+                </span>
+              )}
+              <span className="label">{loading === p ? 'Unlinking…' : label}</span>
+            </button>
+          );
+        }
         return (
           <button key={p} className={`btn provider ${p}${tileButtons ? ' tile' : ''}${horizontal ? ' pill' : ''}`} onClick={() => startOAuth(p)}>
             {showIcons && (

@@ -7,6 +7,7 @@ import EmailPasswordForm from '../components/auth/EmailPasswordForm';
 // OTP is integrated into the login form (code option)
 import AnonymousButton from '../components/auth/AnonymousButton';
 import SessionControls from '../components/auth/SessionControls';
+import ProfileSettings from '../components/auth/ProfileSettings';
 import { account } from '../lib/appwrite';
 import './auth-page.css';
 import LegalContent, { type LegalType } from '../components/legal/LegalContent';
@@ -114,7 +115,7 @@ export default function AuthPage() {
 
   const ProvidersBlock = (
     <>
-  <ProviderButtons providers={enabledProviders} onError={(e) => setError(formatError(e))} showIcons />
+  <ProviderButtons providers={enabledProviders} onError={(e) => setError(formatError(e))} showIcons mode="auth" />
     </>
   );
 
@@ -131,18 +132,30 @@ export default function AuthPage() {
     </div>
   );
 
-  return (
-  <div className={`auth-layout variant-centered`}>
 
-    {userName ? (
-        <div className="card success">
-      <p>{t('msg.signedInAs')} <strong>{userName}</strong></p>
-          <SessionControls />
-        </div>
+  // Helper to refresh userName after profile update or session change
+  const refreshUser = async () => {
+    try {
+      const u = await account.get();
+      setUserName(userLabel(u));
+    } catch {
+      setUserName(null);
+    }
+  };
+
+  return (
+    <div className={`auth-layout variant-centered`}>
+      {userName ? (
+        <>
+          <div className="card success">
+            <p>{t('msg.signedInAs')} <strong>{userName}</strong></p>
+            <SessionControls onChange={refreshUser} />
+          </div>
+          <ProfileSettings onChange={refreshUser} />
+        </>
       ) : (
         <>
           {error && <div className="card error">{error}</div>}
-
           {mode === 'landing' && (
             <>
               {LandingControls}
@@ -154,10 +167,9 @@ export default function AuthPage() {
               </div>
             </>
           )}
-
           {mode === 'email' && (
             <div className="stack">
-        <button className="btn" onClick={() => setMode('landing')}>← {t('btn.back')}</button>
+              <button className="btn" onClick={() => setMode('landing')}>← {t('btn.back')}</button>
               <div className="card">
                 <div className="row" role="radiogroup" aria-label="Email options">
                   <label><input type="radio" name="emailMode" checked={emailMode==='login'} onChange={() => setEmailMode('login')} /> {t('emailOpt.login')}</label>
