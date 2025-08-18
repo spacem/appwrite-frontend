@@ -1,3 +1,31 @@
+input, select, textarea {
+  background: #181c20;
+  color: #e6edf3;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 1em;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+  background: #23272e;
+}
+@media (prefers-color-scheme: light) {
+  input, select, textarea {
+    background: #fff !important;
+    color: #222 !important;
+    border: 1px solid #bfc7d1 !important;
+    box-shadow: 0 1px 2px #0001 !important;
+  }
+  input:focus, select:focus, textarea:focus {
+    background: #f5f8fa !important;
+    border-color: #5b9dff !important;
+  }
+}
 :root{--bg:#0b0d10;--surface:#12161b;--surface-2:#161b22;--border:#263042;--text:#e6edf3;--muted:#9fb0c3;--primary:#5b9dff}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
@@ -28,7 +56,6 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -67,5 +94,11 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+  input, select, textarea {
+    background: #fff;
+    color: #222;
+    border: 1px solid #bfc7d1;
+    box-shadow: 0 1px 2px #0001;
   }
 }

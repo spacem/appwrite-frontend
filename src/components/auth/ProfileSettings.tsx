@@ -78,28 +78,15 @@ export default function ProfileSettings({ onChange }: { onChange?: () => void })
   // Only show loading card if loading and not editing
   if (loading && !nameEdit && !emailEdit && !pwdEdit) return <div className="card">Loading…</div>;
 
+  // Always show error card if error is set and not editing
+  if (error && !nameEdit && !emailEdit && !pwdEdit) {
+    return <div className="card error">{error}</div>;
+  }
+
   return (
-    <div className="card profile-settings">
-      <h3>Profile Settings</h3>
+  <div className="card profile-settings">
       {notice && <div className="card" role="status">{notice}</div>}
-      <div className="field">
-        <label>Name</label>
-        {nameEdit ? (
-          <>
-            {error && <div className="card error">{error}</div>}
-            <div className="row">
-              <input value={name} onChange={e => setName(e.target.value)} />
-              <button className="btn primary" onClick={saveName} disabled={loading}>Save</button>
-              <button className="btn" onClick={() => { setNameEdit(false); setError(null); }}>Cancel</button>
-            </div>
-          </>
-        ) : (
-          <div className="row">
-            <span>{user.name || <em>Not set</em>}</span>
-            <button className="btn" onClick={() => { setNameEdit(true); setError(null); }}>Edit</button>
-          </div>
-        )}
-      </div>
+  {/* Name field removed as requested */}
       <div className="field">
         <label>Email</label>
         {emailEdit ? (

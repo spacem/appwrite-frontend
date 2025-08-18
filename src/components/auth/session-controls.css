@@ -1,3 +1,39 @@
+/* Modal overlay styles */
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0,0,0,0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.modal {
+	background: var(--surface, #222);
+	color: var(--text, #fff);
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+	padding: 24px 20px 16px 20px;
+	min-width: 320px;
+	max-width: 90vw;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+.modal-header h3 {
+	margin: 0 0 8px 0;
+}
+.modal-actions {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-top: 12px;
+}
 .row{display:flex;gap:8px;align-items:center}
 .row.spread{justify-content:space-between}
 .btn.danger{background:#ff4d4f;color:#fff;border-color:#ff4d4f}

@@ -15,8 +15,11 @@ import { useI18n } from '../i18n';
 
 const enabledProviders: OAuthProviderKey[] = ['github', 'discord', 'google'];
 
-export default function AuthPage() {
+import { useNavigate } from 'react-router-dom';
+
+export default function AuthPage({ redirectPath }: { redirectPath?: string }) {
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [userName, setUserName] = useState<string | null>(null);
   const [mode, setMode] = useState<'landing' | 'email'>('landing');
   const [emailMode, setEmailMode] = useState<'login' | 'register'>('login');
@@ -82,8 +85,14 @@ export default function AuthPage() {
   const onAuthSuccess = async () => {
     try {
       const u = await account.get();
-  setUserName(userLabel(u));
+      setUserName(userLabel(u));
       setError(null);
+      // Redirect after login (for OAuth or email)
+      if (redirectPath) {
+        navigate(redirectPath, { replace: true });
+      } else {
+        navigate('/profile', { replace: true });
+      }
     } catch (e) {
       setError('Could not fetch user');
     }
