@@ -12,16 +12,14 @@ export default function AdvancedScreen() {
     setError(null);
     setResult(null);
     try {
-      // Send the input as an object, matching the function's expected input
-      const res = await callAdvancedFunction({ text: input });
-      if (res && typeof res === 'object') {
-        if (res.error) {
-          setError(res.error);
-        } else {
-          setResult(JSON.stringify(res, null, 2));
-        }
+      // Send the input as an object, but the backend now ignores it
+      const res = await callAdvancedFunction({});
+      if (res && typeof res === 'object' && 'message' in res) {
+        setResult(res.message);
+      } else if (res && res.error) {
+        setError(res.error);
       } else {
-        setResult(String(res));
+        setError('Invalid response from function');
       }
     } catch (e: any) {
       setError(e?.message || 'Unknown error');
@@ -50,7 +48,7 @@ export default function AdvancedScreen() {
         {result && (
           <div>
             <strong>Output:</strong>
-            <pre style={{ background: '#f4f4f4', padding: 8, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{result}</pre>
+            <div style={{ background: '#f4f4f4', padding: 8, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{result}</div>
           </div>
         )}
       </div>
