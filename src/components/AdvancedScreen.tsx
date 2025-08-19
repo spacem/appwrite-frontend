@@ -13,7 +13,7 @@ export default function AdvancedScreen() {
     setResult(null);
     try {
       // Send the input as an object, but the backend now ignores it
-      const res = await callAdvancedFunction({});
+      const res = await callAdvancedFunction(input);
       if (res && typeof res === 'object' && 'message' in res) {
         setResult(res.message);
       } else if (res && res.error) {
@@ -48,7 +48,7 @@ export default function AdvancedScreen() {
         {result && (
           <div>
             <strong>Output:</strong>
-            <div style={{ background: '#f4f4f4', padding: 8, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{result}</div>
+            <div>{result}</div>
           </div>
         )}
       </div>

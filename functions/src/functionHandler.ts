@@ -10,13 +10,7 @@ export default async ({ req, res, log }: any) => {
     return res.text('Not authenticated');
   }
   // Get text from request body (if present)
-  let text = '';
-  try {
-    if (req.body) {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      text = body.text || '';
-    }
-  } catch {}
+  let text = req.body;
   try {
     const { name, apiKey } = await getSettings(userId, req.headers['x-appwrite-key'] ?? '', text);
     const result = { message: `Hello ${name} your api key is ${apiKey}. You entered: ${text}` };
