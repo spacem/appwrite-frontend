@@ -5,8 +5,8 @@ export default async ({ req, res, log }: any) => {
   log('Request fields: ' + JSON.stringify(req, null, 2));
   log('Request headers: ' + JSON.stringify(req.headers, null, 2));
 
-  // Try to find userId or other auth fields
-  const userId = req.userId || req.user_id || req['user_id'] || req['userId'];
+  // Use userId from environment variable (Appwrite sets APPWRITE_FUNCTION_USER_ID)
+  const userId = process.env.APPWRITE_FUNCTION_USER_ID;
   if (!userId) {
     return res.text('Not authenticated');
   }
