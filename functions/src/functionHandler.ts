@@ -1,30 +1,26 @@
-import { Client, Users } from 'node-appwrite';
+import { getSettings } from "./getSettings.js";
 
-async function getSettings(client: any, userId: string) {
-  const users = new Users(client);
-  // Get user details
-  const user = await users.get(userId);
-  // Assume API key is stored in user preferences as 'apiKey'
-  const name = user.name || 'User';
-  const apiKey = user.prefs?.apiKey || 'not set';
-  return { name, apiKey };
-}
+export default async ({ req, res, log }: any) => {
+  // Debug: log all request fields and headers
+  log('Request fields: ' + JSON.stringify(req, null, 2));
+  log('Request headers: ' + JSON.stringify(req.headers, null, 2));
 
-// Minimal handler
-export default async ({ req, res }: any) => {
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT ?? '')
-    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID ?? '')
-    .setKey(req.headers['x-appwrite-key'] ?? '');
-
-  // Get userId from req (Appwrite Functions pass userId in req.userId if authenticated)
-  const userId = req.userId;
+  // Try to find userId or other auth fields
+  const userId = req.userId || req.user_id || req['user_id'] || req['userId'];
   if (!userId) {
     return res.text('Not authenticated');
   }
+  // Get text from request body (if present)
+  let text = '';
   try {
-    const { name, apiKey } = await getSettings(client, userId);
-    const result = { message: `Hello ${name} your api key is ${apiKey}` };
+    if (req.body) {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      text = body.text || '';
+    }
+  } catch {}
+  try {
+    const { name, apiKey } = await getSettings(userId, req.headers['x-appwrite-key'] ?? '', text);
+    const result = { message: `Hello ${name} your api key is ${apiKey}. You entered: ${text}` };
     return res.json(result);
   } catch (e: any) {
     return res.json({ error: e?.message || 'Unknown error' });

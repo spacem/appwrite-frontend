@@ -25,6 +25,6 @@ export async function callAdvancedFunction(input: Record<string, any>) {
   try {
     return JSON.parse(stdout);
   } catch {
-    return { error: 'Invalid response from function', raw: stdout };
+    return { error: `Invalid response from function: ${stdout}` };
   }
 }
