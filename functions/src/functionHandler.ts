@@ -5,8 +5,7 @@ export default async ({ req, res, log }: any) => {
   log('Request fields: ' + JSON.stringify(req, null, 2));
   log('Request headers: ' + JSON.stringify(req.headers, null, 2));
 
-  // Use userId from environment variable (Appwrite sets APPWRITE_FUNCTION_USER_ID)
-  const userId = process.env.APPWRITE_FUNCTION_USER_ID;
+  const userId = req.headers['x-appwrite-user-id'];
   if (!userId) {
     return res.text('Not authenticated');
   }
