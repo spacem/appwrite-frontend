@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { callAdvancedFunction } from '../lib/functions';
 
 export default function AdvancedScreen() {

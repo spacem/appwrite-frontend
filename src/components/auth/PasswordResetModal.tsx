@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { account } from '../../lib/appwrite';
 
 export default function PasswordResetModal({ email, onClose, onSuccess }: { email: string, onClose: () => void, onSuccess: () => void }) {

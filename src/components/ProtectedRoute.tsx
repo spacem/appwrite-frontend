@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { account } from '../lib/appwrite';
 
