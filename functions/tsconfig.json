@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
+    "module": "nodenext",
     "rootDir": "src",
-    "resolveJsonModule": true,
     "allowJs": true,
     "outDir": "dist",
     "esModuleInterop": true,

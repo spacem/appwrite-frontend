@@ -12,14 +12,14 @@ export default function AdvancedScreen() {
     setError(null);
     setResult(null);
     try {
-      // Send the input as an object, but the backend now ignores it
-      const res = await callAdvancedFunction(input);
+      // Call the local backend
+  const res = await callAdvancedFunction(input, 'advanced');
       if (res && typeof res === 'object' && 'message' in res) {
         setResult(res.message);
       } else if (res && res.error) {
         setError(res.error);
       } else {
-        setError('Invalid response from function');
+        setError('Invalid response from backend');
       }
     } catch (e: any) {
       setError(e?.message || 'Unknown error');

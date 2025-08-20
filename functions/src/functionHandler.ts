@@ -1,3 +1,4 @@
+import { sharedHandler } from "./sharedHandler.js";
 import { getSettings } from "./getSettings.js";
 
 export default async ({ req, res, log }: any) => {
@@ -6,16 +7,33 @@ export default async ({ req, res, log }: any) => {
   log('Request headers: ' + JSON.stringify(req.headers, null, 2));
 
   const userId = req.headers['x-appwrite-user-id'];
-  if (!userId) {
-    return res.text('Not authenticated');
-  }
-  // Get text from request body (if present)
-  let text = req.body;
+  let text = '';
+  let action = '';
   try {
-    const { name, apiKey } = await getSettings(userId, req.headers['x-appwrite-key'] ?? '', text);
-    const result = { message: `Hello ${name} your api key is ${apiKey}. You entered: ${text}` };
+    if (req.body) {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      text = body.text || '';
+      action = body.action || '';
+    }
+  } catch {}
+  const appwriteApiKey = req.headers['x-appwrite-key'] ?? '';
+  try {
+    const settings = await getSettings(userId, appwriteApiKey, text);
+    const result = await sharedHandler({
+      userId,
+      text,
+      action,
+      appwriteApiKey,
+      userApiKey: settings.apiKey,
+      name: settings.name
+    });
     return res.json(result);
   } catch (e: any) {
-    return res.json({ error: e?.message || 'Unknown error' });
+    if (log) {
+      log('Error in functionHandler: ' + (e?.message || 'Unknown error'));
+      if (e?.stack) log('Stack: ' + e.stack);
+      log('Full error: ' + JSON.stringify(e));
+    }
+    return res.json({ error: e?.message || 'Unknown error', details: e?.stack || e });
   }
 };
