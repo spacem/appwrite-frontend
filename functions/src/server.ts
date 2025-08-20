@@ -16,12 +16,12 @@ app.use(express.json());
 app.post('/api/advanced', async (req, res) => {
   // Use USER_ID from environment variable for all requests
   const userId = process.env.USER_ID || '';
+  const userApiKey = process.env.USER_API_KEY || '';
   const text = req.body.text || '';
   const action = req.body.action || '';
   const appwriteApiKey = process.env.APPWRITE_API_KEY || '';
-  // No userApiKey in local dev
   try {
-    const result = await sharedHandler({ userId, text, action, appwriteApiKey, name: 'Tester' });
+    const result = await sharedHandler({ userId, userApiKey, text, action, appwriteApiKey, name: 'Tester' });
     res.json(result);
   } catch (e: any) {
     console.error('Fatal error in /api/advanced:', e);
