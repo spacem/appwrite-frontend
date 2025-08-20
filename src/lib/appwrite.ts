@@ -1,4 +1,4 @@
-import { Client, Account, ID } from 'appwrite';
+import { Client, Account } from 'appwrite';
 
 // Read from Vite environment variables
 const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;

@@ -9,19 +9,15 @@ export default function ProfileSettings({ onChange }: { onChange?: () => void })
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailEdit, setEmailEdit] = useState(false);
-  const [nameEdit, setNameEdit] = useState(false);
-  const [pwdEdit, setPwdEdit] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [showPwdReset, setShowPwdReset] = useState(false);
 
   useEffect(() => {
     account.get().then(u => {
       setUser(u);
-      setName(u.name || '');
       setEmail(u.email || '');
       setLoading(false);
     }).catch(e => {
@@ -29,24 +25,6 @@ export default function ProfileSettings({ onChange }: { onChange?: () => void })
       setLoading(false);
     });
   }, []);
-
-  const saveName = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await account.updateName(name);
-      const u = await account.get();
-      setUser(u);
-      setName(u.name || '');
-      setNotice('Name updated');
-      setNameEdit(false);
-      onChange?.();
-    } catch (e: any) {
-      setError(e.message || String(e));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const saveEmail = async () => {
     setLoading(true);
@@ -76,10 +54,10 @@ export default function ProfileSettings({ onChange }: { onChange?: () => void })
 
 
   // Only show loading card if loading and not editing
-  if (loading && !nameEdit && !emailEdit && !pwdEdit) return <div className="card">Loading…</div>;
+  if (loading && !emailEdit) return <div className="card">Loading…</div>;
 
   // Always show error card if error is set and not editing
-  if (error && !nameEdit && !emailEdit && !pwdEdit) {
+  if (error && !emailEdit) {
     return <div className="card error">{error}</div>;
   }
 
